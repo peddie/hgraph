@@ -30,7 +30,7 @@ module Data.HGraph.Graph(
 
 import Data.Generics
 
-import Data.HGraph.Class
+import Data.HGraph
 import Data.HApply
 import Data.HList.Private
 import Data.HList

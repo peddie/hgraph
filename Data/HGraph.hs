@@ -1,12 +1,11 @@
 {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE PackageImports #-}
+{-# LANGUAGE TypeOperators #-}
 {-# OPTIONS_GHC -Wall -fforce-recomp -O2 #-}
 
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.HGraphType
+-- Module      :  Data.HGraph
 -- Copyright   :  (c) Matthew Peddie 2012
 -- License     :  GPLv3 (see the file hgraph/COPYING)
 -- 
@@ -14,79 +13,58 @@
 -- Stability   :  experimental
 -- Portability :  GHC
 --
--- Directed graphs on the type level
+-- Directed graphs on the type level -- fundamental classes
 --
 -----------------------------------------------------------------------------
 
-module HGraph where
+module Data.HGraph(
+                   -- ** Generic graphs
+                   HGraph(..)
+                  -- ** Generic graphs with computations on predecessors
+                  , HGraphApply(..)
+                  ) where
 
-import "hgraph" Data.HList
+import Data.HList (HApply(..), (:-), HNil, HList, hNil, HHead(..), HTail(..))
 
-data HGraph' a where
-    Node :: a -> HGraph' a
-    FNode :: HApply f p => a -> f -> p -> HGraph' a
-
--- | A class for graphs
-
+-- | A generic class for directed acyclic graphs, with arbitrary data
+-- @HN a@ and a set of predecessors associated with each node
 class HGraph a where
+    -- | The type of this graph instance's predecessors
     type HP a
+    -- | The type of this node's data
     type HN a
+    -- | Get the predecessors of this node
     hgPred :: a -> HP a
+    -- | Get the node data of this node
     hgNode :: a -> HN a
 
--- | A glass for graphs where each node is endowed with a function
+-- | A class for graphs where each node is endowed with a function
 -- whose arguments are, in order, the node data of its predecessors.
-
+-- HApply is used to link the function to the predecessors, but
+-- there's still no restriction on what the node itself looks like.
 class HGraph a => HGraphApply a where
+    -- | The output type of this graph's function
     type HGAF a
+    -- | Get the function of this node
     hgFun :: a -> HGAF a
+    -- | Apply this node's function to its predecessors
     hgApply :: HApply (HGAF a) (HP a) => a -> HAP (HGAF a) (HP a)
     hgApply node = hApply (hgFun node) (hgPred node)
-
--- | HGraph and HGraphApply instances built on HLists
 
 instance HGraph HNil where
     type HP HNil = HNil
     type HN HNil = HNil
-    hgPred _ = HNil
-    hgNode _ = HNil
+    hgPred _ = hNil
+    hgNode _ = hNil
 
-instance HList l => HGraph (HCons e l) where
-    type HP (HCons e l) = l
-    type HN (HCons e l) = e
-    hgPred (HCons _ l) = l
-    hgNode (HCons e _) = e
+instance HList l => HGraph (e :- l) where
+    type HP (e :- l) = l
+    type HN (e :- l) = e
+    hgPred = hTail
+    hgNode = hHead
                          
-instance HApply f l => HGraphApply (HCons (e,f) l) where
-    type HGAF (HCons (e,f) l) = f
-    hgFun (HCons (_,f) _) = f
-    hgApply (HCons (e, f) l) = hApply f l
-
--- | Another instance of HApply for nested HLists -- if we hApply a
--- node's function to its predecessors, we want the application to
--- reach down a level and get the node data of each predecessor.
-
-instance (HList l, HList m, HArg (e -> b) e, HApply b l) => HApply (e -> b) (HCons (HCons e m) l) where
-    type HAP (e -> b) (HCons (HCons e m) l) = HAP b l
-    hApply f (HCons (HCons e m) l) = hApply (hF f e) l
-
-instance (HList l, HList m, HArg (e -> b) e, HApply b l) => HApply (e -> b) (HCons (HCons (e, g) m) l) where
-    type HAP (e -> b) (HCons (HCons (e, g) m) l) = HAP b l
-    hApply f (HCons (HCons (e, g) m) l) = hApply (hF f e) l
-
-instance Show e => Show (HCons (e, f) p) where
-    show (HCons (e, _) _) = "Node " ++ show e
-
-mkConsNode :: HApply f p => a -> f -> p -> HCons (a, f) p
-mkConsNode d f = HCons (d, f)
-
--- mkNode :: (HGraph a, HGraphApply a) => 
--- mkNode d f p = 
-
-mkNode :: HList l => a -> l -> HCons a l
-mkNode = hCons
-
-testa = mkNode 22 HNil
-testb = mkNode "22" HNil
-testd = mkNode ("Twenty-Two", testf) (HCons testa (HCons testb HNil))
+instance (HList l, HApply f l) => HGraphApply ((e, f) :- l) where
+    type HGAF ((e, f) :- l) = f
+    hgFun = snd . hHead
+    hgApply x = hApply (snd $ hHead x) (hTail x)
 
