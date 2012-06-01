@@ -13,7 +13,7 @@ Description:        Heterogeneous, fully statically typed directed
 Homepage:
 
 build-type:         Simple
-cabal-version:      >= 1.6
+cabal-version:      >= 1.8
 
 extra-source-files: 
 data-files:         
@@ -25,12 +25,13 @@ source-repository head
   location: git://github.com/peddie/hgraph.got
 
 Library
-  build-depends: base == 4.*, syb >= 0.3.6
+  build-depends: base == 4.*, syb == 0.3.*
 
   exposed-modules: Data.HList
                    , Data.HApply
                    , Data.HGraph
                    , Data.HGraph.HCons
                    , Data.HGraph.Graph
+  other-modules: Data.HList.Private
   ghc-options: -O2 
 
