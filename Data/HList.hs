@@ -21,11 +21,6 @@
 -- @MultiParamTypeClasses@, @FlexibleInstances@ and @FlexibleContexts@
 -- to get the typechecker to accept it; it does _not_ require
 -- @UndecideableInstances@.
--- 
--- This is a partial reimplementation of Oleg's @HList@ library, but
--- he used @FunctionalDependencies@ and @UndecideableInstances@ to
--- make the typechecker happy.  Not all the functions are
--- reimplemented due to time constraints.
 --
 -----------------------------------------------------------------------------
 

@@ -5,11 +5,10 @@ License-file:       COPYING
 Author:             Matthew Peddie
 Maintainer:         Matthew Peddie <peddie@alum.mit.edu>
 Category:           Data
-Synopsis:           Statically typed directed graphs and lists
+Synopsis:           Heterogeneous, statically typed graphs and lists
 
-Description:        Statically typed directed graphs -- a variety of 
-                    different implementations.  Also provides an HList 
-		    using Type Families (Oleg uses Functional Dependencies)
+Description:        Heterogeneous, fully statically typed directed 
+                    graphs and lists
                     
 Homepage:
 

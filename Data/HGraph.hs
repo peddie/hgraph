@@ -13,7 +13,8 @@
 -- Stability   :  experimental
 -- Portability :  GHC
 --
--- Directed graphs on the type level -- fundamental classes
+-- Fundamental graph classes for heterogeneous, statically typed
+-- directed graphs.
 --
 -----------------------------------------------------------------------------
 
@@ -26,8 +27,8 @@ module Data.HGraph(
 
 import Data.HList (HApply(..), (:-), HNil, HList, hNil, HHead(..), HTail(..))
 
--- | A generic class for directed acyclic graphs, with arbitrary data
--- @HN a@ and a set of predecessors associated with each node
+-- | A generic class for directed graphs, with arbitrary data @HN a@
+-- and a set of predecessors associated with each node.
 class HGraph a where
     -- | The type of this graph instance's predecessors
     type HP a
@@ -38,10 +39,11 @@ class HGraph a where
     -- | Get the node data of this node
     hgNode :: a -> HN a
 
--- | A class for graphs where each node is endowed with a function
--- whose arguments are, in order, the node data of its predecessors.
--- HApply is used to link the function to the predecessors, but
--- there's still no restriction on what the node itself looks like.
+-- | A class for acyclic graphs where each node is endowed with a
+-- function whose arguments are, in order, the node data of its
+-- predecessors.  HApply is used to link the function to the
+-- predecessors, but there's still no restriction on what the node
+-- itself looks like.  
 class HGraph a => HGraphApply a where
     -- | The output type of this graph's function
     type HGAF a
