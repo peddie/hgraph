@@ -31,12 +31,12 @@
 
 module Data.HList(
                   -- * Safe Constructors
-                  hCons
+                 (+:)
+                 , hCons
                  , hNil
-                  -- * Syntactic Sugar
-                 , (:-)
-                 , (-:)
                  -- * Fundamental Data Types
+                 , HNil
+                 , (:-)
                  , HList
                  -- * Basic Operations
                  , HHead(..)
@@ -66,28 +66,27 @@ import Data.HList.Private
 hNil :: HNil
 hNil = HNil
 
--- | @hCons e l@ conses a new element @e@ onto the @HList@ @l@
-hCons :: HList l => e -> l -> HCons e l
-hCons = HCons
+-- | @e +: l@ attaches a new element @e@ onto the @HList@ @l@
+(+:) :: HList l => e -> l -> e :- l
+(+:) = (:-)
 
--- | @:-@ is a type synonym for @HCons@: @e :- l@ is the same as
--- @HCons e l@
-type e :- l = HCons e l
+infixr 9 +:
 
-infixr 9 :-
+-- | @hCons e l@ attaches a new element @e@ onto the @HList@ @l@.
+-- @hCons@ and @+:@ are identical.
+hCons :: HList l => e -> l -> e :- l
+hCons = (:-)
 
--- | @-:@ is an infix operator: @e -: l@ is the same as @hCons e l@
-(-:) :: HList l => e -> l -> HCons e l
-(-:) = hCons
-
-infixr 9 -:
 
 {- $example
 
-> testa = 22 -: hNil
-> testb = "asdf" -: testa
+> testa = 22 +: hNil
+> testb = "asdf" +: testa
+> testc = Just 22 +: Nothing +: testb
 > 
->   :type testb
->     testb :: HCons [Char] (HCons Integer HNil)
+>   :type testc
+>     testc :: Maybe Integer :- (Maybe a :- ([Char] :- (Integer :- HNil)))
+>   testc
+>     Just 22 :- (Nothing :- ("asdf" :- (22 :- HNil)))
 
 -}

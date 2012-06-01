@@ -31,7 +31,6 @@ module Data.HGraph.HCons(
 
 import Data.HGraph.Class (HGraph(..), HGraphApply(..))
 import Data.HList.Private
-import Data.HList (hCons, hNil, (-:), (:-))
 
 {- $intro
 
@@ -69,24 +68,25 @@ instance (HList l, HList m, HArg (e -> b) e, HApply b l) => HApply (e -> b) (HCo
 
 instance Show e => Show (HCons (e, f) p) where
     show (HCons (e, _) _) = "Node " ++ show e
+import Data.HList (hCons, hNil, (+:), HList, (:-), HNil)
 
 -- | @mkConsNode a f p@ creates a node in an HGraph with data @a@,
 -- function @f@ and @HList@ of predecessors @p@.
-mkConsNode :: HApply f p => a -> f -> p -> (a, f) :- p
+mkConsNode :: (HList p, HApply f p) => a -> f -> p -> (a, f) :- p
 mkConsNode d f = hCons (d, f)
 
 -- | @mkLeafNode a@ creates a node in an HGraph with data @a@
 mkLeafNode :: a -> (a, b -> b) :- HNil
-mkLeafNode d = (d, id) -: hNil
+mkLeafNode d = (d, id) +: hNil
 
 {- $example
 
 > f :: Integer -> String -> String
 > f n s = show n ++ " " ++ s
->
-> testa = mkLeafConsNode (22 :: Integer)
-> testb = mkLeafConsNode "22"
-> testc = mkConsNode "Twenty-Two" f (testa -: testb -: hNil)
+> 
+> testa = mkLeafNode (22 :: Integer)
+> testb = mkLeafNode "22"
+> testc = mkConsNode "Twenty-Two" f (testa +: testb +: hNil)
 > 
 >   hgApply testc
 >     "22 22"

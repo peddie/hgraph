@@ -1,6 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# OPTIONS_GHC -Wall -fforce-recomp -O2 #-}
 
@@ -52,9 +53,9 @@ instance HGraphApply (HNode a f p) where
     type HGAF (HNode a f p) = f
     hgFun (HNode _ f _) = f
 
-instance (HList l, HApply b l) => HApply (a -> b) (HCons (HNode a g q) l) where
-    type HAP (a -> b) (HCons (HNode a g q) l) = HAP b l
-    hApply f (HCons (HNode a _ _) l) = hApply (hF f a) l
+instance (HList l, HApply b l) => HApply (a -> b) (HNode a g q :- l) where
+    type HAP (a -> b) (HNode a g q :- l) = HAP b l
+    hApply f (HNode a _ _ :- l) = hApply (hF f a) l
 
 -- | @mkNode a f p@ creates a new node from a node value @a@, a
 -- function @f@ and an @HList@ of predecessors @p@.
