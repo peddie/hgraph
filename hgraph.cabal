@@ -1,0 +1,35 @@
+Name:               hgraph
+Version:            0.0.1
+License:            GPL-3
+License-file:       COPYING
+Author:             Matthew Peddie
+Maintainer:         Matthew Peddie <peddie@alum.mit.edu>
+Category:           Data
+Synopsis:           Statically typed directed graphs and lists
+
+Description:        Statically typed directed graphs -- a variety of 
+                    different implementations.  Also provides an HList 
+		    using Type Families (Oleg uses Functional Dependencies)
+                    
+Homepage:
+
+build-type:         Simple
+cabal-version:      >= 1.6
+
+extra-source-files: 
+data-files:         
+
+tested-with:        GHC == 7.4.1
+
+source-repository head
+  type: git
+  location: git://github.com/peddie/hgraph.got
+
+Library
+  build-depends: base == 4.*, syb >= 0.3.6
+
+  exposed-modules: Data.HGraph.Class
+                   , Data.HList
+                   , Data.HGraph.HCons, Data.HGraph.Graph
+  ghc-options: -threaded -rtsopts 
+
