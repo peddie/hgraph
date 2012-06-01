@@ -54,21 +54,8 @@ instance HApply f l => HGraphApply (HCons (e,f) l) where
     hgFun (HCons (_,f) _) = f
     hgApply (HCons (_, f) l) = hApply f l
 
--- Another instance of HApply for nested HLists -- if we hApply a
--- node's function to its predecessors, we want the application to
--- reach down a level and get the node data of each predecessor.
-
-instance (HList l, HList m, HArg (e -> b) e, HApply b l) => HApply (e -> b) (HCons (HCons e m) l) where
-    type HAP (e -> b) (HCons (HCons e m) l) = HAP b l
-    hApply f (HCons (HCons e _) l) = hApply (hF f e) l
-
-instance (HList l, HList m, HArg (e -> b) e, HApply b l) => HApply (e -> b) (HCons (HCons (e, g) m) l) where
-    type HAP (e -> b) (HCons (HCons (e, g) m) l) = HAP b l
-    hApply f (HCons (HCons (e, _) _) l) = hApply (hF f e) l
-
-instance Show e => Show (HCons (e, f) p) where
-    show (HCons (e, _) _) = "Node " ++ show e
 import Data.HList (hCons, hNil, (+:), HList, (:-), HNil)
+import Data.HApply
 
 -- | @mkConsNode a f p@ creates a node in an HGraph with data @a@,
 -- function @f@ and @HList@ of predecessors @p@.

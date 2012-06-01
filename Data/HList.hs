@@ -52,6 +52,7 @@ module Data.HList(
                  ) where
 
 import Data.HList.Private
+import Data.HApply
 
 {- $headtail
 

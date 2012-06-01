@@ -34,7 +34,6 @@ module Data.HList.Private(
                          -- * Higher-Order Operations
                          , HArg(..)
                          , HMap(..)
-                         , HApply(..)
                          ) where
 
 import Data.Generics
@@ -133,20 +132,3 @@ instance (HList l, HArg f e, HMap f l) => HMap f (e :- l) where
     type HM f (e :- l) = HAr f e :- HM f l
     hMap f (e :- l) = hF f e :- hMap f l
 
--- | This class is the crown jewel of the library; it applies a
--- function to a heterogeneous @HList@ of arguments.
-class HList a => HApply f a where
-    type HAP f a :: *
-    hApply :: f -> a -> HAP f a
-
--- Here we choose to return the function @f@: if we @hApply@ a
--- function to an empty argument list, it just means we've got a
--- constant on our hands (or maybe it's a monadic function or
--- something).
-instance HApply f HNil where
-    type HAP f HNil = f
-    hApply f _ = f
-
-instance (HList l, HArg (e -> b) e, HApply b l) => HApply (e -> b) (HCons e l) where
-    type HAP (e -> b) (HCons e l) = HAP b l
-    hApply f (HCons e l) = hApply (hF f e) l

@@ -31,6 +31,7 @@ module Data.HGraph.Graph(
 import Data.Generics
 
 import Data.HGraph.Class
+import Data.HApply
 import Data.HList.Private
 import Data.HList
 
