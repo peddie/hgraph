@@ -1,5 +1,5 @@
 Name:               hgraph
-Version:            0.0.1
+Version:            0.0.2
 License:            GPL-3
 License-file:       COPYING
 Author:             Matthew Peddie
@@ -28,8 +28,10 @@ source-repository head
 Library
   build-depends: base == 4.*, syb >= 0.3.6
 
-  exposed-modules: Data.HGraph.Class
-                   , Data.HList
-                   , Data.HGraph.HCons, Data.HGraph.Graph
-  ghc-options: -threaded -rtsopts 
+  exposed-modules: Data.HList
+                   , Data.HApply
+                   , Data.HGraph
+                   , Data.HGraph.HCons
+                   , Data.HGraph.Graph
+  ghc-options: -O2 
 
